@@ -1,0 +1,40 @@
+{% extends 'nav.html' %}
+{% block title %}
+    Home Page
+{% endblock %}
+
+{% block content %}
+
+<script type="text/javascript" src="https://moment.github.io/luxon/global/luxon.js">></script>
+<link href="https://unpkg.com/tabulator-tables@5.4.2/dist/css/tabulator.min.css" rel="stylesheet">
+<script type="text/javascript" src="https://unpkg.com/tabulator-tables@5.4.2/dist/js/tabulator.min.js"></script>
+
+<p>Home</p>
+
+<div style="margin: auto; width: 744px;" id="example-table-theme"></div>
+
+<script type="text/javascript">
+      const tabledata = {{ data | tojson }};
+      const table = new Tabulator(
+        "#example-table-theme",
+        {
+          layout:"fitColumns",
+          pagination:"local",
+          paginationSize:10,
+          paginationSizeSelector:[10, 15, 20],
+          paginationCounter:"rows",
+          data:tabledata,
+
+          columns:[
+            {title:"id", field:"id"},
+            {title:"test_column", field:"test_column"},
+          ]
+        }
+      );
+
+</script>
+
+
+
+
+{% endblock %}
