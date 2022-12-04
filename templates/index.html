@@ -11,28 +11,28 @@
 
 <p>Home</p>
 
-<div style="margin: auto; width: 744px;" id="example-table-theme"></div>
+<form action="login" method="post"> <!-- action is app route -->
+    <table>
+        <tr>
+            <td>
+                {{ form.hidden_tag() }}
+                <p>
+                    {{ form.email.label }} <br>
+                    {{ form.email(size=30) }} <br>
+                    {{ form.password.label }} <br>
+                    {{ form.password(size=30) }} <br>
+                    {{ form.submit }}
+                    <br>
+                    Logging in if you do not have an account will automatically crate one
+                </p>
+            </td>
+        </tr>
+    </table>
 
-<script type="text/javascript">
-      const tabledata = {{ data | tojson }};
-      const table = new Tabulator(
-        "#example-table-theme",
-        {
-          layout:"fitColumns",
-          pagination:"local",
-          paginationSize:10,
-          paginationSizeSelector:[10, 15, 20],
-          paginationCounter:"rows",
-          data:tabledata,
 
-          columns:[
-            {title:"id", field:"id"},
-            {title:"test_column", field:"test_column"},
-          ]
-        }
-      );
+</form>
 
-</script>
+
 
 
 
