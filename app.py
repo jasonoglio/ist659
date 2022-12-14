@@ -16,6 +16,7 @@ import MySQLdb.cursors
 import connectorx as cx
 
 from forms import LoginForm
+from forms import SearchForm
 
 
 
@@ -37,7 +38,7 @@ def nav():
 
 @app.route('/', methods=["GET", "POST"])
 def index():
-    form = LoginForm()
+    form = LoginForm('/')
 
     conn = f'mysql://admin:istIST659@ist659-db.cqx6ke9fapft.us-east-1.rds.amazonaws.com:3306/ist659'  # connection token
     query = 'SELECT * FROM ist659.fake_table'  # query string
@@ -69,17 +70,68 @@ def login():
         engine = create_engine('mysql://admin:istIST659@ist659-db.cqx6ke9fapft.us-east-1.rds.amazonaws.com:3306/ist659')
 
         if form_data.get('email') in customer_email_list:
-            pass
+
+            pw_query = '''
+                    SELECT customer_password FROM ist659.customers WHERE customer_email IN ('%s')
+                    '''%(form_data.get('email'))
+
+            customer_password = cx.read_sql(conn, pw_query, return_type='pandas')
+            customer_password = customer_password['customer_password'].to_list()
+            print(customer_password)
+
+            if form_data.get('password') in customer_password:
+                form = SearchForm('login')
+                return render_template("main.html", form=form, data=data.to_dict(orient='records'))
+            else:
+                form = LoginForm('/')
+                return render_template("index.html", form=form)
+
         else:
             update_sql = '''
-            INSERT INTO `ist659`.`customers` (`customer_email`, `customer_password`) VALUES ('%s', '%s');
-            '''%(form_data.get('email'), form_data.get('password'))
+            INSERT INTO `ist659`.`customers` (`customer_email`, `customer_password`, `customer_firstname`, 
+            `customer_lastname`, `customer_phone`) VALUES ('%s', '%s', '%s', '%s', '%s');
+            '''%(form_data.get('email'), form_data.get('password'), form_data.get('first_name'), form_data.get('last_name'),
+                 form_data.get('phone'))
             engine.execute(update_sql)
-
 
         return render_template("main.html", data=data.to_dict(orient='records'))
 
+@app.route('/search', methods=["GET", "POST"])
+def search():
+    if request.method == 'POST':
+        print('test')
+        form_data = request.form
+        print(form_data.get('search'))
 
+        # this route has to return a dataframe
+
+        data = [[1, 'tour', 'venue', 'opener', 'headliner', 'event_date', 'doors_open']]
+        df = pd.DataFrame(data, columns=['event_id', 'tour', 'venue', 'opener', 'headliner', 'event_date', 'doors_open'])
+        # make a test dataframe
+        print(df)
+
+        event_id = list(df['event_id'])
+        tour = list(df['tour'])
+        venue = list(df['venue'])
+        opener = list(df['opener'])
+        headliner = list(df['headliner'])
+        event_date = list(df['event_date'])
+        doors_open = list(df['doors_open'])
+
+        dict_list = [{'event_id': event_id[i], 'tour': tour[i], 'venue': venue[i],
+                      'opener': opener[i], 'headliner': headliner[i], 'event_date': event_date[i],
+                      'doors_open': doors_open[i]} for i in range(len(event_id))]
+
+        return render_template("search.html", dict_list=dict_list)
+
+
+@app.route('/buy', methods=["GET", "POST"])
+def buy():
+    if "buy" in request.form:
+        print(request.form['buy'])
+        buy = int(request.form['buy'])
+
+        return render_template("buy.html")
 
 
 if __name__ == "__main__":
