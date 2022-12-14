@@ -14,6 +14,25 @@
 Logged in as {{ session['customer'] }}
 </p>
 
+<br>
+<p> Find a Show!</p>
+<form action="search" method="post"> <!-- action is app route -->
+    <table>
+        <tr>
+            <td>
+                {{ form.hidden_tag() }}
+                <p>
+                    {{ form.search.label }} <br>
+                    {{ form.search(size=30) }} <br>
+                    {{ form.submit }}
+                    <br>
+
+                </p>
+            </td>
+        </tr>
+    </table>
+</form>
+
 <div style="margin: auto; width: 744px;" id="example-table-theme"></div>
 
 <script type="text/javascript">

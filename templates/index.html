@@ -19,18 +19,37 @@
                 <p>
                     {{ form.email.label }} <br>
                     {{ form.email(size=30) }} <br>
+                    {{ form.first_name.label }} <br>
+                    {{ form.first_name(size=30) }} <br>
+                    {{ form.last_name.label }} <br>
+                    {{ form.last_name(size=30) }} <br>
+                    {{ form.phone.label }} <br>
+                    {{ form.phone(size=30) }} <br>
                     {{ form.password.label }} <br>
                     {{ form.password(size=30) }} <br>
                     {{ form.submit }}
                     <br>
-                    Logging in if you do not have an account will automatically crate one
+                    Logging in if you do not have an account will<br> automatically create one
                 </p>
             </td>
         </tr>
     </table>
-
-
 </form>
+
+<p>
+    When you click login the following SQL is used in the transaction:
+    <br><br>
+    SELECT customer_email FROM ist659.customers
+    <br><br>
+    SELECT customer_password FROM ist659.customers WHERE customer_email IN ('%s')
+    <br><br>
+    INSERT INTO `ist659`.`customers` (`customer_email`, `customer_password`, `customer_firstname`, <br>
+            `customer_lastname`, `customer_phone`) VALUES ('%s', '%s', '%s', '%s', '%s');
+    <br><br>
+    The web front end controls if the transaction is successful and reroutes to the same page on a fail
+    <br><br>
+    ** WHENEVER YOU SEE '%s' in the SQL that is where the user inputs are inserted **
+</p>
 
 
 
